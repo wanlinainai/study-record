@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1_父组件向子组件传值</title>
+</head>
+
+<body>
+  <div id="test"></div>
+
+  <script type="text/javascript" src="../new_js/react.development.js"></script>
+  <script type="text/javascript" src="../new_js/react-dom.development.js"></script>
+  <script type="text/javascript" src="../new_js/babel.min.js"></script>
+
+  <script type="text/babel">
+    class App extends React.Component {
+      state = {
+        todos: [
+          { id: "001", name: "吃饭", done: true },
+          { id: "002", name: "睡觉", done: false },
+          { id: "003", name: "上班", done: true },
+          { id: "004", name: "学React", done: false }
+        ]
+      };
+
+      render() {
+        return (
+          // 放置子组件
+          <List todos={this.state.todos} />
+        )
+      }
+    }
+
+    // 创建子组件
+    class List extends React.Component {
+      render() {
+        return (
+          <ul className="todo-main">
+            {this.props.todos.map((item, index) => {
+              return <Item key={item.id} todo={item} />
+            })}
+          </ul>
+        )
+      }
+    }
+
+    class Item extends React.Component {
+      render() {
+        return (
+          <li>
+            <input type="checkbox" checked={this.props.todo.done} />
+            <span>{this.props.todo.name}</span>
+            <button>删除</button>
+          </li>
+        )
+      }
+    }
+
+    // 渲染父组件
+    ReactDOM.render(<App />, document.getElementById('test'))
+  </script>
+</body>
+
+</html>

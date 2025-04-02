@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机生成页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Promise_Test</h1>
+    <button onclick="promiseTest()">Promise_test</button>
+</div>
+
+<script>
+    function runAsync() {
+        let p = new Promise(function (resolve, reject) {
+            // 做一些异步操作
+            setTimeout(function () {
+                console.log('执行结束')
+                resolve('这是数据：123')
+            }, 2000)
+        })
+
+        return p
+    }
+
+    function runAsync1() {
+        var p = new Promise(function (resolve, reject) {
+            // 做一些异步的操作
+            setTimeout(function () {
+                console.log('异步任务1执行完成1')
+                resolve('这是runAsync1')
+            }, 1000)
+        })
+
+        return p;
+    }
+
+    function runAsync2() {
+        var p = new Promise(function (resolve, reject) {
+            // 做一些异步的操作
+            setTimeout(function () {
+                console.log('异步任务2执行完成2')
+                resolve('这是runAsync2')
+            }, 500)
+        })
+
+        return p;
+    }
+
+    function runAsync3() {
+        var p = new Promise(function (resolve, reject) {
+            // 做一些异步的操作
+            setTimeout(function () {
+                console.log('异步任务3执行完成3')
+                resolve('这是runAsync3')
+            }, 1000)
+        })
+
+        return p;
+    }
+
+    function getNumber() {
+        let p = new Promise(function (resolve, reject) {
+            // 做一些异步操作
+            setTimeout(function () {
+                var num = Math.ceil(Math.random() * 10); // 生成1-10的随机数
+                if (num <= 5) {
+                    resolve(num)
+                } else {
+                    reject('数字过大...')
+                }
+            }, 1000)
+        });
+
+        return p;
+    }
+
+    function requestMsg() {
+        let p = new Promise(function (resolve, reject) {
+            let img = new Image();
+            img.onload = function() {
+                resolve(img);
+            }
+            img.src = "http://www.asdfh.com/getPic?pic_url=llllads";
+        });
+        return p;
+    }
+
+    // 这是超时函数
+    function timeout() {
+        let p = new Promise(function (resolve, reject) {
+            setTimeout(function () {
+                reject('图片资源请求超时!');
+            }, 5000) // 请求5S还没有的话就抛出
+        });
+        return p;
+    }
+
+    function promiseTest() {
+        Promise
+            .race([requestMsg(), timeout()])
+            .then(function(results) {
+                console.log(results)
+            })
+            .catch(function (reason) {
+                console.log(reason)
+            })
+    }
+</script>
+</body>
+</html>

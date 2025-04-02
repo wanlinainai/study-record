@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>函数式组件</title>
+  <link rel="shortcut icon" href="../favicon.ico">
+</head>
+
+<body>
+  <div id="test">
+
+  </div>
+
+  <!-- 引入react核心库 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入react的dom操作库 -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入babel -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel">
+    /*
+      1. 必须要继承React.Component
+      2. 必须实现render()方法
+    */
+    // 1. 创键类式组件
+    class MyComponent extends React.Component {
+      /*
+        1. render()是放在哪里的？ -- 类的原型对象上，供实例使用
+        2. 为什么我没有new Component()却能拿到这个方法呢？ -- 你不是在<MyComponent />中使用了吗，React自动给new了
+      */
+      render() {
+        console.log('this指向对象:', this);
+        return <h2>我是用类定义的组件(适用于【复杂组件】的定义)</h2>
+      }
+    }
+
+    // 2. 渲染组件到页面
+    ReactDOM.render(<MyComponent />, document.getElementById('test'))
+    /*
+      1. React解析组件标签，找到了MyComponent组件。
+      2. 发现组件是使用类定义的，随后new出来该类的实例，并通过该实例调用到原型上的方法render()
+      3. 将render()的返回的虚拟DOM转成真实DOM。
+    */
+  </script>
+</body>
+
+</html>

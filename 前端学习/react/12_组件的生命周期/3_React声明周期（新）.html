@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React生命周期（新）</title>
+</head>
+
+<body>
+
+  <div id="test"></div>
+
+  <!-- 引入react核心库 -->
+  <script type="text/javascript" src="../new_js/react.development.js"></script>
+  <!-- 引入react的dom操作库 -->
+  <script type="text/javascript" src="../new_js/react-dom.development.js"></script>
+  <!-- 引入babel -->
+  <script type="text/javascript" src="../new_js/babel.min.js"></script>
+
+  <script type="text/babel">
+
+    /*
+
+    */
+
+    // 创建组件
+    class Count extends React.Component {
+
+      // 构造器
+      constructor(props) {
+        console.log('Count --- constructor');
+        super(props)
+
+        // 初始化状态
+        this.state = {
+          count: 0
+        }
+      }
+
+      // 一般不会使用的，若state的值在任何时候都取决于props，那么可以使用这个函数
+      static getDerivedStateFromProps(props, state) {
+        console.log('Count --- getDerivedStateFromProps', props, state);
+        // 返回状态对象
+        return null;
+      }
+
+      componentDidMount() {
+        console.log('Count --- ComponentDidMount');
+      }
+
+      componentWillUnmount() {
+        console.log('Count --- ComponentWillUnmount');
+      }
+
+      // 判断setState之后是否需要更新的函数，如果返回的是true，那么就继续找下一个声明周期函数，如果返回的是false，那么就在此处停止了。默认返回的是true。
+      // 如果返回的是false，那么页面的渲染就不能执行了。
+      shouldComponentUpdate() {
+        console.log('Count --- shouldComponentUpdate');
+        return true;
+      }
+
+      // 在componentDidUpdate更新之前调用，将返回值传递给这个函数。更新之前获取快照
+      getSnapshotBeforeUpdate() {
+        console.log('Count --- getSnapshotBeforeUpdate');
+        return 'caixukun'
+      }
+
+      componentDidUpdate(preProps, preState, snapshotValue) {
+        console.log('Count --- componentDidUpdate', preProps, preState, snapshotValue);
+      }
+
+      add = () => {
+        // 获取原状态
+        const { count } = this.state
+        this.setState({
+          count: count + 1
+        })
+      }
+
+      death = () => {
+        // 卸载组件
+        ReactDOM.unmountComponentAtNode(document.getElementById('test'))
+      }
+
+      render() {
+        console.log('Count --- render');
+
+        return (
+          <div>
+            <h2>当前数字是:{this.state.count}</h2>
+            <button onClick={this.add}>点我+1</button>
+            <button onClick={this.death}>卸载组件</button>
+          </div>
+        )
+      }
+    }
+    // 渲染组件
+    ReactDOM.render(<Count count={200} />, document.getElementById('test'))
+  </script>
+</body>
+
+</html>

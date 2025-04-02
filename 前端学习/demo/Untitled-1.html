@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>切换主题</title>
+    <style>
+         :root {
+            --background-color: #fff;
+            ;
+            background-color: var(--background-color);
+        }
+        
+         :root.dark {
+            --background-color: #000000;
+        }
+        
+         ::view-transition-new(root),
+         ::view-transition-old(root) {
+            animation: none;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="btn">theme</button>
+    <script>
+        const btn = document.querySelector('#btn')
+        btn.addEventListener('click', (e) => {
+            const transition = document.startViewTransition(() => {
+                document.documentElement.classList.toggle('dark')
+            })
+
+            const x = e.clientX
+            const y = e.clientY
+
+            transition.ready.then(() => {
+                document.documentElement.animate({
+                    clipPath: [`circle(0% at ${x}px ${y}py)`, `circle(100% at ${x}px ${y}py)`]
+                }, {
+                    duration: 1000,
+                    pseudoElement: 'view-transition-new(root)'
+                })
+            })
+        })
+    </script>
+</body>
+
+</html>

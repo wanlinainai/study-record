@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2_受控组件</title>
+</head>
+
+<body>
+  <div id="test"></div>
+
+  <!-- 引入react核心库 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入react的dom操作库 -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入babel -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+  <script type="text/babel">
+    // 创建组件
+    class Login extends React.Component {
+
+      // 初始化状态
+      state = {
+        username: "",
+        password: ""
+      }
+
+      // 保存用户名到状态
+      saveUsername = (event) => {
+        // event.targe获取到的是元素，不是值
+        this.setState({
+          username: event.target.value
+        })
+      }
+
+      // 保存密码到状态state
+      savePassword = (event) => {
+        this.setState({
+          password: event.target.value
+        })
+      }
+      handleSubmit = (event) => {
+        event.preventDefault();
+        // 直接从state中取值，state中的值对应的都是具体的名字
+        const { username, password } = this.state;
+        alert(`输入的用户名是:${username}, 输入的密码是:${password}`)
+      }
+      render() {
+        return (
+          <form onSubmit={this.handleSubmit}>
+            用户名:<input type="text" name="username" onChange={this.saveUsername} />
+            密码:<input type="password" name="password" onChange={this.savePassword} />
+            <button>登录</button>
+          </form>
+        )
+      }
+    }
+
+    // 渲染组件
+    ReactDOM.render(<Login />, document.getElementById('test'))
+
+    /*
+      
+    */
+  </script>
+</body>
+
+</html>

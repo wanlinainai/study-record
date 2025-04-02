@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello_React</title>
+</head>
+
+<body>
+  <div id="test1"></div>
+  <div id="test2"></div>
+  <div id="test3"></div>
+  <div id="test4"></div>
+
+  <!-- 引入react核心库 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入react的dom操作库 -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入babel -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+  <!-- 引入proptypes -->
+  <script type="text/javascript" src="../js/prop-types.js"></script>
+
+  <script type="text/babel">
+    // 创建组件
+    class Person extends React.Component {
+      render() {
+        const { name, sex, age } = this.props;
+        return (
+          <ul>
+            <li>姓名: {name}</li>
+            <li>年龄: {age}</li>
+            <li>性别: {sex}</li>
+          </ul>
+        )
+      }
+    }
+
+    Person.propTypes = {
+      name: PropTypes.string.isRequired,
+      sex: PropTypes.string,
+      age: PropTypes.number,
+      speak: PropTypes.func,
+    }
+
+    Person.defaultProps = {
+      sex: '不男不女',
+      age: 18,
+    }
+
+    // 渲染
+    ReactDOM.render(<Person name="nigger" speak={speak} />, document.getElementById('test1'))
+    ReactDOM.render(<Person name="Jerry" sex="女" age={19} />, document.getElementById('test2'))
+    ReactDOM.render(<Person name="Jack" sex="男" age={30} />, document.getElementById('test3'))
+    // 1. 如果人的属性太多了，这样写是不是太猥琐了？react中可以直接使用 ...p
+    const p = { name: '李白', age: 18, sex: '男' }
+    ReactDOM.render(<Person {...p} />, document.getElementById('test4'))
+
+    function speak() {
+      console.log('我说话了!!!!');
+    }
+  </script>
+</body>
+
+</html>

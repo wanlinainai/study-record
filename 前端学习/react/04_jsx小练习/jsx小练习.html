@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jsx小练习</title>
+</head>
+
+<body>
+  <div id="test">
+
+  </div>
+
+  <!-- 引入react核心库 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入react的dom操作库 -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入babel -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel">
+    /*
+      【JS语句（代码）】与【JS表达式】
+        1. JS表达式：一个表达式可以产生一个值，可以放在任何一个需要的地方
+        2. 语句：if()、switch()、for()
+    */
+
+    // 模拟数据
+    const data = ['Angular', 'react', 'Vue']
+
+    // 1. 创建虚拟DOM
+    const VDOM = (
+      <div>
+        <h1>前端JS框架列表</h1>
+        <ul>
+          {
+            data.map((item, index) => {
+              return <li key={index}>{item}</li>
+            })
+          }
+        </ul>
+      </div>
+    )
+    // 2. 渲染虚拟DOM到页面
+    ReactDOM.render(VDOM, document.getElementById(
+      'test'
+    ))
+  </script>
+</body>
+
+</html>

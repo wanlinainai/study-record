@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello_React</title>
+  <link rel="shortcut icon" href="../favicon.ico">
+</head>
+
+<body>
+  <div id="test">
+
+  </div>
+
+  <!-- 引入react核心库 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入react的dom操作库 -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入babel -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel">
+    class Weather extends React.Component {
+      constructor(props) {
+        super(props)
+        // 初始化状态
+        this.state = {
+          isHot: true,
+          wind: '微风'
+        }
+        this.changeWeather = this.changeWeather.bind(this)
+      }
+
+      // React中如何进行处理点击事件：
+      // 1. 使用onClick()函数进行点击调用，记住是驼峰命名，React中很多都是onXxx()，都换成了驼峰命名。
+      // 2. 在onClick()函数中，不能使用字符串类型，需要使用{}调用
+      // 3. 在{}中，调用的方法不能是函数形式xxx()，需要是函数名xxx。
+
+      render() {
+        // 读取状态
+        return <h1 onClick={this.changeWeather}>今天天气很{this.state.isHot ? '炎热' : '寒冷'}， {this.state.wind}</h1>
+      }
+
+      changeWeather() {
+        // changeWeather()方法放在哪里？ -- Weather的原型对象上，供实例使用
+        // 由于changeWeather是作为onClick的回调，所以不是通过实例调用的，是直接调用的。
+        // 类中的方法默认开启了严格模式，所以说changeWeather()的this是undefined。
+
+        // 获取原来的isHot值
+        const isHot = this.state.isHot
+        // React是非响应式的，需要手动设置状态
+        this.setState({
+          isHot: !isHot
+        })
+      }
+    }
+
+    ReactDOM.render(<Weather />, document.getElementById('test'))
+  </script>
+</body>
+
+</html>

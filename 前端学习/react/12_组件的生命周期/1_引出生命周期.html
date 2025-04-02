@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>引出生命周期</title>
+</head>
+
+<body>
+
+  <div id="test"></div>
+
+  <!-- 引入react核心库 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入react的dom操作库 -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入babel -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel">
+    // 创建组件
+    class Life extends React.Component {
+
+      state = {
+        opacity: 1
+      }
+
+      death = () => {
+        // 关闭定时器
+        // clearInterval(this.timer)
+        // 卸载组件√
+        ReactDOM.unmountComponentAtNode(document.getElementById('test'))
+      }
+
+      // 这个方法是和render()是兄弟。所以不需要回调函数，和对象实例绑定
+      // 组件挂载完毕
+      componentDidMount() {
+        this.timer = setInterval(() => {
+          let { opacity } = this.state
+          opacity -= 0.1
+          if (opacity <= 0) opacity = 1
+          this.setState({ opacity })
+        }, 200)
+      }
+
+      // 组件将要卸载
+      componentWillUnmount() {
+        clearInterval(this.timer)
+      }
+
+      // 初始化渲染、state状态改变
+      render() {
+        // 如果是在render中调用的话，每一次setState都会引起render方法的调用，导致死循环。render(render(render(....)))。CPU消耗大大增加。同时页面显示会出现鬼畜。
+        // setInterval(() => {
+        //   let { opacity } = this.state
+        //   opacity -= 0.1
+        //   if (opacity <= 0) opacity = 1
+        //   this.setState({ opacity })
+        // }, 200)
+        return (
+          <div>
+            <h2 style={{ opacity: this.state.opacity }}>React的生命周期</h2>
+            <button onClick={this.death}>去死吧</button>
+          </div>
+        )
+      }
+    }
+
+    // 渲染组件
+    ReactDOM.render(<Life />, document.getElementById('test'))
+
+    /*
+      挂载： 就是以为的将页面渲染到页面上(mount)
+      卸载： 就是将页面从页面上卸载(onmount)
+    */
+
+  </script>
+</body>
+
+</html>

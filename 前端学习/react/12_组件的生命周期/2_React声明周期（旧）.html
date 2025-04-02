@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>父子组件的生命周期</title>
+</head>
+
+<body>
+
+  <div id="test"></div>
+
+  <!-- 引入react核心库 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入react的dom操作库 -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入babel -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel">
+
+    /*
+      1. 初始化阶段：由ReactDOM.render()触发 --- 初次渲染
+        1. constructor()
+        2. componentWillMount()
+        3. render()
+        4. componmentDidMount() =====> 常用，一般在这个钩子中做初始化的事，例如：开启定时器、发送网络请求、订货消息
+      2. 更新阶段：由组件内部的this.setState()或者父组件render()触发
+        1. shouldComponentUpdate() -- forceUpdate()不会调用
+        2. componentWillUpdate()
+        3. render() =====> 必须
+        4. componentDidUpdate()
+      3. 由ReactDOM.unmountComponentAtNode()触发： 触发组件
+        1. componentWillUnmount()  =====> 常用，一般在这个钩子中做一些收尾的事，例如：关闭定时器、取消订阅消息
+    */
+
+    // 创建组件
+    class Count extends React.Component {
+
+      // 构造器
+      constructor(props) {
+        console.log('Count --- constructor');
+        super(props)
+
+        // 初始化状态
+        this.state = {
+          count: 0
+        }
+      }
+
+      // 组件将要挂载
+      componentWillMount() {
+        console.log('Count --- componentWillMount');
+
+      }
+
+      componentDidMount() {
+        console.log('Count --- ComponentDidMount');
+      }
+
+      componentWillUnmount() {
+        console.log('Count --- ComponentWillUnmount');
+      }
+
+      // 判断setState之后是否需要更新的函数，如果返回的是true，那么就继续找下一个声明周期函数，如果返回的是false，那么就在此处停止了。默认返回的是true。
+      // 如果返回的是false，那么页面的渲染就不能执行了。
+      shouldComponentUpdate() {
+        console.log('Count --- shouldComponentUpdate');
+        return true;
+      }
+
+      componentWillUpdate() {
+        console.log('Count --- componentWillUpdate');
+      }
+
+      componentDidUpdate() {
+        console.log('Count --- componentDidUpdate');
+      }
+
+      add = () => {
+        // 获取原状态
+        const { count } = this.state
+        this.setState({
+          count: count + 1
+        })
+      }
+
+      death = () => {
+        // 卸载组件
+        ReactDOM.unmountComponentAtNode(document.getElementById('test'))
+      }
+
+      render() {
+        console.log('Count --- render');
+
+        return (
+          <div>
+            <h2>当前数字是:{this.state.count}</h2>
+            <button onClick={this.add}>点我+1</button>
+            <button onClick={this.death}>卸载组件</button>
+          </div>
+        )
+      }
+    }
+
+
+    class A extends React.Component {
+      state = {
+        carName: '奔驰'
+      }
+
+      changeCar = () => {
+        this.setState({
+          carName: '宝马'
+        })
+      }
+
+      render() {
+        return (
+          <div>
+            <h2>A组件</h2>
+            <button onClick={this.changeCar}>换车</button>
+            <B carName={this.state.carName} />
+          </div>
+        )
+      }
+    }
+
+    class B extends React.Component {
+
+      // 坑：第一次渲染的时候，不会执行这个函数。
+      // 组件将要接收新的props的钩子
+      componentWillReceiveProps(props) {
+        console.log('B --- componentWillReceiveProps', props);
+      }
+
+      render() {
+        return (
+          <div>
+            <h2>B组件, 车辆是:{this.props.carName}</h2>
+          </div>
+        )
+      }
+    }
+    // 渲染组件
+    ReactDOM.render(<A />, document.getElementById('test'))
+  </script>
+</body>
+
+</html>
