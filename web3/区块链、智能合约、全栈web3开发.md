@@ -346,16 +346,227 @@ main().then(() => process.exit(0))
 
 成功了，bitch!!!!
 
-
-
-infura:
-API Key:672d4c08be774a33b22f6b4f70097517
-
-HTTPS:https://mainnet.infura.io/v3/672d4c08be774a33b22f6b4f70097517
-
-curl --url https://mainnet.infura.io/v3/672d4c08be774a33b22f6b4f70097517 \  -X POST \  -H "Content-Type: application/json" \  -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-
 > Tips:token 
 >
 > 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
+
+## HardHat
+
+### 环境配置
+
+详情见：https://hardhat.org/tutorial/setting-up-the-environment
+
+我们已经安装过了，这一步直接跳过。
+
+### 创建一个新的hardhat项目
+
+```shell
+yarn add --save-dev hardhat
+
+# 初始化
+yarn hardhat init
+```
+
+```shell
+888    888                      888 888               888
+888    888                      888 888               888
+888    888                      888 888               888
+8888888888  8888b.  888d888 .d88888 88888b.   8888b.  888888
+888    888     "88b 888P"  d88" 888 888 "88b     "88b 888
+888    888 .d888888 888    888  888 888  888 .d888888 888
+888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.
+888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888
+
+👷 Welcome to Hardhat v2.22.19 👷‍
+
+? What do you want to do? …
+  Create a JavaScript project
+  Create a TypeScript project
+  Create a TypeScript project (with Viem)
+❯ Create an empty hardhat.config.js
+  Quit
+```
+
+选择JavaScript project。
+
+详情继续见网址：https://hardhat.org/tutorial/creating-a-new-hardhat-project
+
+### Contract
+
+将之前的`SimpleStorage.sol`文件搬到文件夹的`contracts`中。
+
+```solidity
+// SPDX-License-Identifier: SEE LICENSE IN LICENSE
+pragma solidity ^0.8.8;
+
+contract SimpleStorage {
+    uint256 public favoriteNumber;
+
+    struct People {
+        uint256 favoriteNumber;
+        string name;
+    }
+
+    People[] public people;
+
+    mapping (string => uint256) public nameToFavoriteNumber;
+
+    function store(uint256 _favoruteNumber) public {
+        favoriteNumber = _favoruteNumber;
+    }
+
+    function retrieve() public view returns(uint256) {
+        return favoriteNumber;
+    }
+
+    function addPerson(string memory _name, uint256 _favoriteNumber) public {
+        people.push(People(_favoriteNumber, _name));
+        nameToFavoriteNumber[_name] = _favoriteNumber;
+    }
+}
+```
+
+### 配置deploy.js文件
+
+还是之前的内容，但是我们使用的是hardhat的内置函数，详情见代码吧
+
+```javascript
+// imports
+const { ethers } = require("hardhat");
+// async main function
+async function main() { 
+  const SimpleStorgaeFactory = await ethers.getContractFactory("SimpleStorage")
+  console.log("Deploying contract...");
+  const simpleStorage = await SimpleStorgaeFactory.deploy();
+  await simpleStorage.waitForDeployment();
+
+  // getAddress
+  const address = await simpleStorage.getAddress();
+  console.log(`Deployed contract to: ${address}`);
+  
+  
+}
+// main
+main().then(() => process.exit(0))
+  .catch(error => {
+    console.error(error);
+    process.exit(1);
+  })
+```
+
+本身还有一个验证的内容，不过由于API Key，sepolia好像没有。先不搞了。
+
+### hardhat配置文件
+
+这个配置文件中的内容主要是配置使用的network、Solidity版本、默认Network。还有一些比较私密的密码、URL一类的。
+
+```javascript
+require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
+require("@nomicfoundation/hardhat-ethers");
+require("./Tasks/block-number")
+
+
+const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  defaultNetwork: "hardhat",
+  // defaultNetwork: "sepolia",
+  networks: {
+    sepolia: {
+      url: SEPOLIA_RPC_URL,
+      accounts: [PRIVATE_KEY],
+      chainId: 11155111
+    }
+  },
+  solidity: "0.8.8",
+};
+```
+
+> 上述的内容解释：
+>
+> defaultNetwork指的是默认的网络，默认的是"hardhat"，当然可以换成sepolia测试网。
+>
+> networks可以用来设置具体的网络数组，之后在命令行中可以使用命令指定这个网络地址。
+>
+> solidity值的是使用的Solidity版本，我们使用的是0.8.8，是为了和视频中的保持一致。
+
+### Test测试
+
+在test文件夹中写一些Solidity的测试代码，写这个测试的内容本身分成两个门派：直接使用Solidity、使用JavaScript来进行模拟合约交互。此处使用的是JavaScript合约模拟交互。
+
+先讲一下要点：其中分成beforeEach()函数和it()函数，before函数是用来进行真正测试功能之前的初始化一类的功能。it()函数就是具体的测试内容。
+
+来代码吧。
+
+```javascript
+const { ethers } = require("hardhat")
+const { assert } = require("chai");
+
+
+describe("SimpleStorage", () => {
+  let simpleStorageFactory, simpleStorage;
+  beforeEach(async function () {
+    // get contract factory
+    simpleStorageFactory = await ethers.getContractFactory("SimpleStorage");
+    // deploy contract 
+    simpleStorage = await simpleStorageFactory.deploy();
+  });
+
+  it("Should start with a favorite number of 0", async function () {
+    const currentValue = await simpleStorage.retrieve();
+    const expectValue = "0";
+
+    assert.equal(currentValue.toString(), expectValue);
+  });
+  // update
+  it.only("Should update when we call store", async function () {
+    const expectedValue = "7";
+    const updateValue = await simpleStorage.store(expectedValue);
+    await updateValue.wait(1);
+
+    const currentValue = await simpleStorage.retrieve();
+    assert.equal(currentValue.toString(), expectedValue);
+  })
+})
+```
+
+> 可以看到其中还是有一些没有说过的部分。我们在beforeEach中进行了合约的初始化，很简单吧。
+>
+> 接下来的两个it()函数，一个是用来对比初始化的number是不是0，另一个是测试更新之后的number是不是7，其中的第二个it函数的only 是代表着只会测试这一个函数，其他函数不会进行测试。
+
+我们执行：`yarn hardhat test`进行测试
+
+在没有加上only的时候：
+
+![image-20250407001249313](images/区块链、智能合约、全栈web3开发/image-20250407001249313.png)
+
+加上only的话：
+
+![image-20250407001348712](images/区块链、智能合约、全栈web3开发/image-20250407001348712.png)
+
+可以看到测试通过了。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
