@@ -1,22 +1,24 @@
-class Person {
-  name: string
-  age: string
-  constructor(name: string, age: string) {
-    this.name = name
-    this.age = age
-  }
+// 定义一个包装类：包含weight体重信息
+// 再定一个标准包装类，继承自包装类
+abstract class Pakcage {
+  constructor(public weight: number) { }
+  // 抽象方法
+  abstract calulate(): number;
 
-  speak() {
-    console.log(`Hello, I'm ${this.name}, i'm ${this.age}岁`);
+  printPackage() {
+    console.log(`包裹重量是:${this.weight}kg, 运费是: ${this.calulate()} 元`);
   }
 }
 
-const p1 = new Person('小明', '18')
-console.log(p1)
-p1.speak()
+class StandardPackage extends Pakcage {
 
-// 属性的简写形式
-class Person2 {
-  constructor(public name: string, public age: number) { }
+  constructor(weight: number, public unitPrice: number) {
+    super(weight);
+  }
+  calulate(): number {
+    return this.unitPrice * this.weight;
+  }
 }
 
+const s1 = new StandardPackage(10, 5)
+s1.printPackage();
