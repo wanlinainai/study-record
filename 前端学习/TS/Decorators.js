@@ -5,19 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-function LogTime(target) {
-    // @ts-ignore
-    return class extends target {
-        constructor(...args) {
-            super(...args);
-            this.createdTime = new Date();
-        }
-        getTime() {
-            return `该对象的创建时间是:${this.createdTime}`;
-        }
-    };
-}
-let Person = class Person {
+let Person1 = class Person1 {
     constructor(name, age) {
         this.name = name;
         this.age = age;
@@ -26,9 +14,19 @@ let Person = class Person {
         console.log('你好啊');
     }
 };
-Person = __decorate([
-    LogTime
-], Person);
-const p1 = new Person('小明', 18);
-// console.log(p1);
-console.log(p1.getTime());
+Person1 = __decorate([
+    LogInfo(3)
+], Person1);
+// 装饰器工厂
+function LogInfo(n) {
+    // 装饰器
+    return function (target) {
+        target.prototype.introduce = function () {
+            for (let index = 0; index < n; index++) {
+                console.log(`我叫:${this.name}, 年龄是:${this.age}`);
+            }
+        };
+    };
+}
+const person1 = new Person1('张三', 18);
+person1.introduce();

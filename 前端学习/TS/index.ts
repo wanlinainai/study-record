@@ -1,24 +1,38 @@
-// 定义一个包装类：包含weight体重信息
-// 再定一个标准包装类，继承自包装类
-abstract class Pakcage {
-  constructor(public weight: number) { }
-  // 抽象方法
-  abstract calulate(): number;
+type Constructor = new (...args: any[]) => {}
+function LogTime<T extends Constructor>(target: T) {
+  // @ts-ignore
+  return class extends target {
+    createdTime: Date
+    constructor(...args: any[]) {
+      super(...args);
+      this.createdTime = new Date()
+    }
 
-  printPackage() {
-    console.log(`包裹重量是:${this.weight}kg, 运费是: ${this.calulate()} 元`);
+    getTime() {
+      return `该对象的创建时间是:${this.createdTime}`
+    }
+  }
+}
+@LogTime
+class Person {
+
+  name: string;
+  age: number;
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+
+  speak() {
+    console.log('你好啊');
   }
 }
 
-class StandardPackage extends Pakcage {
-
-  constructor(weight: number, public unitPrice: number) {
-    super(weight);
-  }
-  calulate(): number {
-    return this.unitPrice * this.weight;
-  }
+interface Person {
+  getTime(): void
 }
 
-const s1 = new StandardPackage(10, 5)
-s1.printPackage();
+
+const p1 = new Person('小明', 18);
+// console.log(p1);
+console.log(p1.getTime());

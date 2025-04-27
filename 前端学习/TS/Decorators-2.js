@@ -5,30 +5,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-function LogTime(target) {
-    // @ts-ignore
-    return class extends target {
-        constructor(...args) {
-            super(...args);
-            this.createdTime = new Date();
-        }
-        getTime() {
-            return `该对象的创建时间是:${this.createdTime}`;
-        }
+function test1(target) {
+    console.log('test1');
+}
+function test2() {
+    console.log('test2工厂');
+    return function (target) {
+        console.log('test2');
     };
 }
-let Person = class Person {
-    constructor(name, age) {
-        this.name = name;
-        this.age = age;
-    }
-    speak() {
-        console.log('你好啊');
-    }
+function test3() {
+    console.log('test3工厂');
+    return function (target) {
+        console.log('test3');
+    };
+}
+function test4(target) {
+    console.log('test4');
+}
+let Person2 = class Person2 {
 };
-Person = __decorate([
-    LogTime
-], Person);
-const p1 = new Person('小明', 18);
-// console.log(p1);
-console.log(p1.getTime());
+Person2 = __decorate([
+    test1,
+    test2(),
+    test3(),
+    test4
+], Person2);
+// 执行顺序：装饰器工厂：从上到下，装饰器： 从下到上
